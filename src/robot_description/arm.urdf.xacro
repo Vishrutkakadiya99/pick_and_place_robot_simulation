@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<robot name="six_dof_arm" xmlns:xacro="http://www.ros.org/xacro">
+
+    <xacro:property name="M_PI" value="3.14159265359"/>
+    <xacro:property name="BASE_HEIGHT" value="0.1"/>
+    <xacro:property name="L1_LENGTH" value="0.5"/>
+    <link name="base_link">
+        <visual>
+            <geometry><box size="0.2 0.2 ${BASE_HEIGHT}"/></geometry>
+        </visual>
+        <collision>
+            <geometry><box size="0.2 0.2 ${BASE_HEIGHT}"/></geometry>
+        </collision>
+        <inertial>
+            </inertial>
+    </link>
+
+    <joint name="joint1" type="revolute">
+        <parent link="base_link"/>
+        <child link="link1"/>
+        <origin xyz="0 0 ${BASE_HEIGHT/2}" rpy="0 0 0"/>
+        <axis xyz="0 0 1"/> <limit lower="-${M_PI}" upper="${M_PI}" effort="100" velocity="0.5"/>
+    </joint>
+
+    <link name="link1">
+        </link>
+
+    <xacro:macro name="arm_transmission" params="joint_name">
+        <transmission name="${joint_name}_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${joint_name}">
+                <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${joint_name}_motor">
+                <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+    </xacro:macro>
+
+    <xacro:arm_transmission joint_name="joint1"/>
+    </robot>
